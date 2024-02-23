@@ -1,4 +1,4 @@
-module github/luis/addtranslations
+module github.com/luisbeqja/autoAddTranslation
 
 go 1.21
 

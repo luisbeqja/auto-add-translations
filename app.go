@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github/luis/addtranslations/translations"
 	"strings"
+
+	"github.com/luisbeqja/autoAddTranslation/translations"
 
 	"github.com/tealeg/xlsx"
 )
