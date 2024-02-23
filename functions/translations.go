@@ -1,4 +1,4 @@
-package translations
+package functions
 
 import (
 	"bufio"
@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func AddTranslation(translation string, lang string, filePath string, translationKey string) error {
+func AddTranslation(translation string, filePath string, translationKey string) error {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return err

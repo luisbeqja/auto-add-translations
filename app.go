@@ -6,7 +6,7 @@ import (
 
 	"strings"
 
-	"github.com/luisbeqja/autoAddTranslation/translations"
+	"github.com/luisbeqja/autoAddTranslation/functions"
 
 	"github.com/tealeg/xlsx"
 )
@@ -57,11 +57,14 @@ func readXlsxFile(path string) {
 func (a *App) DivideTabs(text string, path string, translationKey string) string {
 	parts := strings.Split(text, "\t")
 
-	langs := [12]string{"en_US", "en_GB", "en_AU", "en_NZ", "en_CA", "de_DE", "es_MX", "es_ES", "fr_CA", "fr_FR", "pt_BR", "nl_NL"}
-	// /Users/luisbeqja/Desktop/kuama/sgh-static-ui/src/scripts/locales/cms
+	langs := [12]string{"en_US", "en_GB", "en_AU", "en_NZ", "en_CA", "de_DE", "es_MX", "es_ES", "fr_CA", "fr_FR", "nl_NL", "pt_BR"}
+
 	for key, part := range parts {
 		langPath := path + "/" + langs[key] + ".js"
-		translations.AddTranslation()(part, "us", langPath, translationKey)
+		err := functions.AddTranslation(part, langPath, translationKey)
+		if err != nil {
+			return "Error adding translation to " + langs[key]
+		}
 	}
-	return "Your translations have been added to the files."
+	return "Your translations have been added to all the files."
 }

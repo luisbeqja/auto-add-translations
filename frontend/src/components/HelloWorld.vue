@@ -6,7 +6,23 @@ const data = reactive({
   translations: '',
   folderPath: '',
   translationKey: '',
+
   resultText: 'Enter your translations here 👇',
+
+  languages: [
+    'en_US',
+    'en_GB',
+    'en_AU',
+    'en_NZ',
+    'en_CA',
+    'de_DE',
+    'es_MX',
+    'es_ES',
+    'fr_CA',
+    'fr_FR',
+    'nl_NL',
+    'pt_BR',
+  ],
 });
 
 function greet() {
