@@ -1,6 +1,6 @@
 <script setup>
 import { reactive } from 'vue';
-import { DivideTabs } from '../../wailsjs/go/main/App';
+import { AddTranslationHandler } from '../../wailsjs/go/main/App';
 import Config from './config.vue';
 
 const data = reactive({
@@ -9,26 +9,11 @@ const data = reactive({
   translationKey: '',
 
   resultText: 'Enter your translations here 👇',
-
-  languages: [
-    'en_US',
-    'en_GB',
-    'en_AU',
-    'en_NZ',
-    'en_CA',
-    'de_DE',
-    'es_MX',
-    'es_ES',
-    'fr_CA',
-    'fr_FR',
-    'nl_NL',
-    'pt_BR',
-  ],
 });
 
 
-function greet() {
-  DivideTabs(data.translations, data.folderPath, data.translationKey).then(
+function submitTranslations() {
+  AddTranslationHandler(data.translations, data.folderPath, data.translationKey).then(
     (result) => {
       data.resultText = result;
     }
@@ -64,7 +49,7 @@ function greet() {
         type="text"
         placeholder="Add Folder Path"
       />
-      <button class="btn" @click="greet">Add Translatins</button>
+      <button class="btn" @click="submitTranslations">Add Translatins</button>
     </div>
     <Config></Config>
   </main>

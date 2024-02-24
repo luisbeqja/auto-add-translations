@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 
 	"strings"
@@ -56,7 +54,7 @@ func (a *App) startup(ctx context.Context) {
 	}
 } */
 
-func (a *App) AddConfiguration(file string) string {
+func (a *App) AddConfigurationHandler(file string) string {
 	homeDir, _ := os.UserHomeDir()
 	// Your input string
 	inputString := file
@@ -71,37 +69,20 @@ func (a *App) AddConfiguration(file string) string {
 	return "Your configuration has been added to the file."
 }
 
-func (a *App) DowloadConfig() string {
-	err := functions.DownloadHandler()
+func (a *App) DowloadConfigHandler() string {
+	err := functions.DownloadConfig()
 	if err != nil {
 		return "Error downloading file:" + err.Error()
 	}
 	return "File user_config.json in Downloads folder"
 }
 
-func (a *App) DivideTabs(text string, path string, translationKey string) string {
-
-	homeDir, _ := os.UserHomeDir()
-	configFle := homeDir + "/Add-translations-config/user_config.json"
-	jsonFile, err := os.Open(configFle)
+func (a *App) AddTranslationHandler(text string, path string, translationKey string) string {
+	langsArray, err := functions.ReadConfig("languages")
 	if err != nil {
-		fmt.Println(err)
-		return "Error opening file"
+		return "Error reading config file"
 	}
-	defer jsonFile.Close()
-
-	// Read our opened jsonFile as a byte array.
-	byteValue, _ := io.ReadAll(jsonFile)
-
-	var result map[string]interface{}
-	json.Unmarshal([]byte(byteValue), &result)
-
-	langsArray := result["languages"].([]interface{})
-
-	fmt.Println(langsArray[0])
-
 	parts := strings.Split(text, "\t")
-
 	for key, part := range parts {
 		if len(langsArray) > key {
 			langPath := path + "/" + fmt.Sprintf("%v", langsArray[key]) + ".js"

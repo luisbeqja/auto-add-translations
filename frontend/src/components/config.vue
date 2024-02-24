@@ -1,6 +1,6 @@
 <script setup>
 import { reactive } from 'vue';
-import { AddConfiguration, DowloadConfig } from '../../wailsjs/go/main/App';
+import { AddConfigurationHandler, DowloadConfigHandler } from '../../wailsjs/go/main/App';
 
 const data = reactive({
   isOpen: false,
@@ -12,7 +12,7 @@ function upploadFileConf(file) {
   reader.onload = (event) => {
     const result = JSON.parse(event.target.result);
     const formatted = JSON.stringify(result, null, 2);
-    AddConfiguration(formatted);
+    AddConfigurationHandler(formatted);
   };
   reader.readAsText(file.target.files[0]);
 }
@@ -22,7 +22,7 @@ function toggleConfig() {
 }
 
 function dowloadConfig() {
-  DowloadConfig().then((result) => {
+  DowloadConfigHandler().then((result) => {
     data.resultDowloaText = result;
   });
 }

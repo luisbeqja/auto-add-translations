@@ -1,9 +1,13 @@
 package functions
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 )
 
 func CreateInitialConfig() error {
@@ -53,5 +57,74 @@ func CreateInitialConfig() error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func ReadConfig(field string) ([]interface{}, error) {
+	homeDir, _ := os.UserHomeDir()
+	configFle := homeDir + "/Add-translations-config/user_config.json"
+	jsonFile, err := os.Open(configFle)
+	if err != nil {
+		return nil, err
+	}
+	defer jsonFile.Close()
+
+	// Read our opened jsonFile as a byte array.
+	byteValue, _ := io.ReadAll(jsonFile)
+
+	var result map[string]interface{}
+	json.Unmarshal([]byte(byteValue), &result)
+
+	langsArray := result[field].([]interface{})
+
+	return langsArray, nil
+}
+
+func OpenDowloadFolder(folderPath string) error {
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "darwin":
+		cmd = exec.Command("open", folderPath)
+	case "windows":
+		cmd = exec.Command("explorer", folderPath)
+	case "linux":
+		cmd = exec.Command("xdg-open", folderPath)
+	default:
+		return fmt.Errorf("unsupported operating system")
+	}
+
+	return cmd.Run()
+}
+
+func DownloadConfig() error {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println("Error getting home directory:", err)
+		return err
+	}
+	// Specify the download folder path
+	downloadFolderPath := filepath.Join(homeDir, "Downloads")
+
+	srcFile, err := os.Open(homeDir + "/Add-translations-config" + "/user_config.json")
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+	fileName := "user_config.json"
+
+	// Create the destination file in the specified folder
+	destFileName := filepath.Join(downloadFolderPath, fileName)
+	destFile, err := os.Create(destFileName)
+	if err != nil  {
+		return err
+	}
+	defer destFile.Close()
+
+	// Copy the contents from source to destination
+	_, err = io.Copy(destFile, srcFile)
+	if err != nil {
+		return err
+	}
+	OpenDowloadFolder(homeDir + "/Downloads")
 	return nil
 }
