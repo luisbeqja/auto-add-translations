@@ -52,7 +52,7 @@ func DownloadHandler() error {
 	// Specify the download folder path
 	downloadFolderPath := filepath.Join(homeDir, "Downloads")
 
-	srcFile, err := os.Open("conf/user_config.json")
+	srcFile, err := os.Open(homeDir + "/Add-translations-config" + "/user_config.json")
 	if err != nil {
 		return err
 	}

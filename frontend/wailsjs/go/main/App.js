@@ -6,8 +6,8 @@ export function AddConfiguration(arg1) {
   return window['go']['main']['App']['AddConfiguration'](arg1);
 }
 
-export function DivideTabs(arg1, arg2, arg3, arg4) {
-  return window['go']['main']['App']['DivideTabs'](arg1, arg2, arg3, arg4);
+export function DivideTabs(arg1, arg2, arg3) {
+  return window['go']['main']['App']['DivideTabs'](arg1, arg2, arg3);
 }
 
 export function DowloadConfig() {

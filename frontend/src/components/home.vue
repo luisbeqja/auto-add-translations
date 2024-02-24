@@ -1,8 +1,7 @@
 <script setup>
 import { reactive } from 'vue';
-import { DivideTabs, AddConfiguration } from '../../wailsjs/go/main/App';
+import { DivideTabs } from '../../wailsjs/go/main/App';
 import Config from './config.vue';
-import user_config from '../../../conf/user_config.json';
 
 const data = reactive({
   translations: '',
@@ -29,7 +28,7 @@ const data = reactive({
 
 
 function greet() {
-  DivideTabs(data.translations, data.folderPath, data.translationKey, user_config.languages).then(
+  DivideTabs(data.translations, data.folderPath, data.translationKey).then(
     (result) => {
       data.resultText = result;
     }

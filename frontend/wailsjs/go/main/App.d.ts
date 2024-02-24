@@ -3,6 +3,6 @@
 
 export function AddConfiguration(arg1:string):Promise<string>;
 
-export function DivideTabs(arg1:string,arg2:string,arg3:string,arg4:Array<string>):Promise<string>;
+export function DivideTabs(arg1:string,arg2:string,arg3:string):Promise<string>;
 
 export function DowloadConfig():Promise<string>;

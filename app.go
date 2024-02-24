@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"strings"
@@ -24,6 +26,7 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	functions.CreateInitialConfig()
 }
 
 // FOR FUTURE USE: possibility to add directly from an excel file giving just the line of the translation
@@ -54,11 +57,13 @@ func (a *App) startup(ctx context.Context) {
 } */
 
 func (a *App) AddConfiguration(file string) string {
+	homeDir, _ := os.UserHomeDir()
 	// Your input string
 	inputString := file
-
+	path := homeDir + "/Add-translations-config/user_config.json"
 	// Write the string to a file
-	err := os.WriteFile("conf/user_config.json", []byte(inputString), 0644)
+	err := os.WriteFile(path, []byte(inputString), 0644)
+
 	if err != nil {
 		fmt.Println("Error writing to file:", err)
 		return ""
@@ -69,20 +74,43 @@ func (a *App) AddConfiguration(file string) string {
 func (a *App) DowloadConfig() string {
 	err := functions.DownloadHandler()
 	if err != nil {
-		return "Error downloading file"
+		return "Error downloading file:" + err.Error()
 	}
 	return "File user_config.json in Downloads folder"
 }
 
-func (a *App) DivideTabs(text string, path string, translationKey string, langs []string) string {
+func (a *App) DivideTabs(text string, path string, translationKey string) string {
+
+	homeDir, _ := os.UserHomeDir()
+	configFle := homeDir + "/Add-translations-config/user_config.json"
+	jsonFile, err := os.Open(configFle)
+	if err != nil {
+		fmt.Println(err)
+		return "Error opening file"
+	}
+	defer jsonFile.Close()
+
+	// Read our opened jsonFile as a byte array.
+	byteValue, _ := io.ReadAll(jsonFile)
+
+	var result map[string]interface{}
+	json.Unmarshal([]byte(byteValue), &result)
+
+	langsArray := result["languages"].([]interface{})
+
+	fmt.Println(langsArray[0])
+
 	parts := strings.Split(text, "\t")
 
 	for key, part := range parts {
-		langPath := path + "/" + langs[key] + ".js"
-		err := functions.AddTranslation(part, langPath, translationKey)
-		if err != nil {
-			return "Error adding translation to " + langs[key]
+		if len(langsArray) > key {
+			langPath := path + "/" + fmt.Sprintf("%v", langsArray[key]) + ".js"
+			err := functions.AddTranslation(part, langPath, translationKey)
+			if err != nil {
+				return "Error adding translation to " + fmt.Sprintf("%v", langsArray[key])
+			}
 		}
+
 	}
 	return "Your translations have been added to all the files."
 }
