@@ -1,6 +1,8 @@
 <script setup>
 import { reactive } from 'vue';
-import { DivideTabs } from '../../wailsjs/go/main/App';
+import { DivideTabs, AddConfiguration } from '../../wailsjs/go/main/App';
+import Config from './config.vue';
+import user_config from '../../../conf/user_config.json';
 
 const data = reactive({
   translations: '',
@@ -25,19 +27,20 @@ const data = reactive({
   ],
 });
 
+
 function greet() {
-  DivideTabs(data.translations, data.folderPath, data.translationKey).then(
+  DivideTabs(data.translations, data.folderPath, data.translationKey, user_config.languages).then(
     (result) => {
       data.resultText = result;
     }
   );
 }
 </script>
-<!-- 'ciao ciao  components  stai  bene'-->
+
 <template>
-  <main>
+  <main class="main">
     <div id="result" class="result">{{ data.resultText }}</div>
-    <div id="input" class="input-box">
+    <div id="inputs" class="input-box">
       <input
         id="translations"
         v-model="data.translations"
@@ -46,8 +49,6 @@ function greet() {
         type="text"
         placeholder="Add Translation"
       />
-      <br />
-      <br />
       <input
         id="translationKey"
         v-model="data.translationKey"
@@ -56,8 +57,6 @@ function greet() {
         type="text"
         placeholder="Add Translation Key"
       />
-      <br />
-      <br />
       <input
         id="folderPath"
         v-model="data.folderPath"
@@ -66,14 +65,32 @@ function greet() {
         type="text"
         placeholder="Add Folder Path"
       />
-      <br />
-      <br />
       <button class="btn" @click="greet">Add Translatins</button>
     </div>
+    <Config></Config>
   </main>
 </template>
 
 <style scoped>
+#inputs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+#configFile {
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+  background-color: #cfd9df;
+}
+
 .result {
   height: 20px;
   line-height: 20px;
@@ -96,6 +113,7 @@ function greet() {
 }
 
 .input-box .input {
+  width: 70%;
   border: none;
   border-radius: 3px;
   outline: none;

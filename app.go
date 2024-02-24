@@ -3,12 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"strings"
 
 	"github.com/luisbeqja/autoAddTranslation/functions"
-
-	"github.com/tealeg/xlsx"
 )
 
 // App struct
@@ -27,13 +26,13 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-func readXlsxFile(path string) {
+// FOR FUTURE USE: possibility to add directly from an excel file giving just the line of the translation
+/* func readXlsxFile(path string) {
 	file, err := xlsx.OpenFile("existing.xlsx")
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
 	}
-	// Specify the sheet and row you want to read (assuming 0-based indices)
 	sheetIndex := 0 // Index of the sheet (e.g., 0 for the first sheet)
 	rowIndex := 0   // Index of the row (e.g., 0 for the first row)
 
@@ -52,12 +51,31 @@ func readXlsxFile(path string) {
 			fmt.Printf("Column %c: (empty)\n", 'A'+colIndex)
 		}
 	}
+} */
+
+func (a *App) AddConfiguration(file string) string {
+	// Your input string
+	inputString := file
+
+	// Write the string to a file
+	err := os.WriteFile("conf/user_config.json", []byte(inputString), 0644)
+	if err != nil {
+		fmt.Println("Error writing to file:", err)
+		return ""
+	}
+	return "Your configuration has been added to the file."
 }
 
-func (a *App) DivideTabs(text string, path string, translationKey string) string {
-	parts := strings.Split(text, "\t")
+func (a *App) DowloadConfig() string {
+	err := functions.DownloadHandler()
+	if err != nil {
+		return "Error downloading file"
+	}
+	return "File user_config.json in Downloads folder"
+}
 
-	langs := [12]string{"en_US", "en_GB", "en_AU", "en_NZ", "en_CA", "de_DE", "es_MX", "es_ES", "fr_CA", "fr_FR", "nl_NL", "pt_BR"}
+func (a *App) DivideTabs(text string, path string, translationKey string, langs []string) string {
+	parts := strings.Split(text, "\t")
 
 	for key, part := range parts {
 		langPath := path + "/" + langs[key] + ".js"
