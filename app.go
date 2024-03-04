@@ -2,12 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"os"
-
-	"strings"
 
 	"github.com/luisbeqja/autoAddTranslation/functions"
+	"github.com/luisbeqja/autoAddTranslation/ui"
 )
 
 // App struct
@@ -55,43 +52,13 @@ func (a *App) startup(ctx context.Context) {
 } */
 
 func (a *App) AddConfigurationHandler(file string) string {
-	homeDir, _ := os.UserHomeDir()
-	// Your input string
-	inputString := file
-	path := homeDir + "/Add-translations-config/user_config.json"
-	// Write the string to a file
-	err := os.WriteFile(path, []byte(inputString), 0644)
-
-	if err != nil {
-		fmt.Println("Error writing to file:", err)
-		return ""
-	}
-	return "Your configuration has been added to the file."
+	return ui.AddConfigurationHandler(file)
 }
 
 func (a *App) DowloadConfigHandler() string {
-	err := functions.DownloadConfig()
-	if err != nil {
-		return "Error downloading file:" + err.Error()
-	}
-	return "File user_config.json in Downloads folder"
+	return ui.DowloadConfigHandler()
 }
 
 func (a *App) AddTranslationHandler(text string, path string, translationKey string) string {
-	langsArray, err := functions.ReadConfig("languages")
-	if err != nil {
-		return "Error reading config file"
-	}
-	parts := strings.Split(text, "\t")
-	for key, part := range parts {
-		if len(langsArray) > key {
-			langPath := path + "/" + fmt.Sprintf("%v", langsArray[key]) + ".js"
-			err := functions.AddTranslation(part, langPath, translationKey)
-			if err != nil {
-				return "Error adding translation to " + fmt.Sprintf("%v", langsArray[key])
-			}
-		}
-
-	}
-	return "Your translations have been added to all the files."
+	return ui.AddTranslationHandler(text, path, translationKey)
 }
