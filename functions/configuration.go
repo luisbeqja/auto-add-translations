@@ -10,6 +10,24 @@ import (
 	"runtime"
 )
 
+const initialConfig = `{
+		"languages": [
+			"en_US",
+			"en_GB",
+			"en_AU",
+			"en_NZ",
+			"en_CA",
+			"de_DE",
+			"es_MX",
+			"es_ES",
+			"fr_CA",
+			"fr_FR",
+			"nl_NL",
+			"pt_BR" 
+		],
+		"file_tipe": "json"
+		}`
+
 func CreateInitialConfig() error {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -36,23 +54,7 @@ func CreateInitialConfig() error {
 		return nil
 	}
 	// Write the initial content to the file
-	err = os.WriteFile(infoFolder+"/"+fileName, []byte(`{
-		"languages": [
-			"en_US",
-			"en_GB",
-			"en_AU",
-			"en_NZ",
-			"en_CA",
-			"de_DE",
-			"es_MX",
-			"es_ES",
-			"fr_CA",
-			"fr_FR",
-			"nl_NL",
-			"pt_BR" 
-		],
-		"file_tipe": "json"
-		}`), 0644)
+	err = os.WriteFile(infoFolder+"/"+fileName, []byte(initialConfig), 0644)
 
 	if err != nil {
 		return err
@@ -80,22 +82,6 @@ func ReadConfig(field string) ([]interface{}, error) {
 	return langsArray, nil
 }
 
-func OpenDowloadFolder(folderPath string) error {
-	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "darwin":
-		cmd = exec.Command("open", folderPath)
-	case "windows":
-		cmd = exec.Command("explorer", folderPath)
-	case "linux":
-		cmd = exec.Command("xdg-open", folderPath)
-	default:
-		return fmt.Errorf("unsupported operating system")
-	}
-
-	return cmd.Run()
-}
-
 func DownloadConfig() error {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -115,7 +101,7 @@ func DownloadConfig() error {
 	// Create the destination file in the specified folder
 	destFileName := filepath.Join(downloadFolderPath, fileName)
 	destFile, err := os.Create(destFileName)
-	if err != nil  {
+	if err != nil {
 		return err
 	}
 	defer destFile.Close()
@@ -127,4 +113,20 @@ func DownloadConfig() error {
 	}
 	OpenDowloadFolder(homeDir + "/Downloads")
 	return nil
+}
+
+func OpenDowloadFolder(folderPath string) error {
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "darwin":
+		cmd = exec.Command("open", folderPath)
+	case "windows":
+		cmd = exec.Command("explorer", folderPath)
+	case "linux":
+		cmd = exec.Command("xdg-open", folderPath)
+	default:
+		return fmt.Errorf("unsupported operating system")
+	}
+
+	return cmd.Run()
 }
