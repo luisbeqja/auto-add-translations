@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/luisbeqja/autoAddTranslation/components"
 	"github.com/luisbeqja/autoAddTranslation/functions"
 	"github.com/luisbeqja/autoAddTranslation/ui"
 )
@@ -60,5 +61,12 @@ func (a *App) DowloadConfigHandler() string {
 }
 
 func (a *App) AddTranslationHandler(text string, path string, translationKey string) string {
-	return ui.AddTranslationHandler(text, path, translationKey)
+	answer, err := components.OpenDialog(a.ctx, "Do you want to add this translation?", "all your translation will be added to your files", "Yes")
+	if err != nil {
+		return "Error opening dialog"
+	}
+	if answer == "YES" {
+		return ui.AddTranslationHandler(text, path, translationKey)
+	}
+	return "Enter your translations here 👇"
 }
